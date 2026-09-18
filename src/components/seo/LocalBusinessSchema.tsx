@@ -1,4 +1,4 @@
-import { siteConfig } from '@/lib/site-config';
+import { siteConfig, primaryKeyword } from '@/lib/site-config';
 
 export default function LocalBusinessSchema() {
   const sameAs = [siteConfig.social.facebook, siteConfig.social.instagram, siteConfig.social.twitter].filter(Boolean);
@@ -44,7 +44,7 @@ export default function LocalBusinessSchema() {
         availableLanguage: 'English',
       },
     ],
-    description: `${siteConfig.primaryKeyword ?? 'Plumber in McKinney TX'} — 24/7 emergency plumbing, drain cleaning, slab leak repair, water filtration systems in Craig Ranch, Stonebridge Ranch, Adriatica, Tucker Hill & all McKinney neighborhoods. Call ${siteConfig.phoneDisplay} for same-day service!`,
+    description: `${primaryKeyword ?? 'Plumber in McKinney TX'} — 24/7 emergency plumbing, drain cleaning, slab leak repair, water filtration systems in Craig Ranch, Stonebridge Ranch, Adriatica, Tucker Hill & all McKinney neighborhoods. Call ${siteConfig.phoneDisplay} for same-day service!`,
   };
 
   return (
