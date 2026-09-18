@@ -1,0 +1,70 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mckinney-plumbing-app
+    ports:
+      - '3000:3000'
+    environment:
+      - MONGODB_URI=mongodb://mongo:27017/mckinney-plumbing
+      - NEXT_PUBLIC_SITE_URL=http://localhost:3000
+      - NEXT_PUBLIC_PHONE=2148567674
+      - NEXT_PUBLIC_PHONE_DISPLAY=(214) 856-7674
+      - NEXT_PUBLIC_BUSINESS_NAME=McKinney Plumbing & Drain Clean Services
+      - NEXT_PUBLIC_CITY=McKinney
+      - NEXT_PUBLIC_STATE=Texas
+      - NEXT_PUBLIC_GOOGLE_MAPS_URL=https://maps.app.goo.gl/hPNVkFRpk6cqnEsT6
+      - ADMIN_PASSWORD=admin123
+    depends_on:
+      mongo:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - plumbing-network
+
+  mongo:
+    image: mongo:7.0
+    container_name: mckinney-plumbing-mongo
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: ['CMD', 'mongosh', '--eval', "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - plumbing-network
+
+  # Dev-only: MongoDB GUI
+  mongo-express:
+    image: mongo-express:latest
+    container_name: mckinney-plumbing-mongo-express
+    ports:
+      - '8081:8081'
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=mongo
+      - ME_CONFIG_MONGODB_PORT=27017
+      - ME_CONFIG_BASICAUTH_USERNAME=admin
+      - ME_CONFIG_BASICAUTH_PASSWORD=admin123
+    depends_on:
+      mongo:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - plumbing-network
+    profiles:
+      - dev
+
+volumes:
+  mongo-data:
+    driver: local
+
+networks:
+  plumbing-network:
+    driver: bridge
